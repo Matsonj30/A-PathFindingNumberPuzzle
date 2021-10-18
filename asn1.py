@@ -1,3 +1,4 @@
+import copy
 def initializeBoard():
    board = []
    row = []
@@ -30,7 +31,11 @@ def solvePuzzle(boardState):
         for action in possibleActions(AStarQueue.pop(0)):
             AStarQueue.append(action)
 
-    
+
+#class node:
+ #   def initiate(numbersGiven):
+
+
 ## Given a state, will print all possible actions
 def possibleActions(currentState):
     possibleActionsList = []
@@ -62,7 +67,8 @@ def possibleActions(currentState):
     #these are the places the empty stone can move
     #take the input list, "alter" it, put in new list, keep temp somehow?
     for option in NewZeroLocations:
-        possibleActionTemp = currentState  #giving same address 
+        print(currentState)
+        possibleActionTemp = copy.deepcopy(currentState)  #giving same address 
         print(hex(id(possibleActionTemp)))
         print(hex(id(currentState)))
         temp = currentState[option[0]][option[1]] #get value that is to be swapped with 0
@@ -70,10 +76,10 @@ def possibleActions(currentState):
         possibleActionTemp[ZeroRow][ZeroCol] = temp #put the temporary value into the zero position
         possibleActionsList.append(possibleActionTemp)
         
-        possibleActionTemp[ZeroRow][ZeroCol] = 0 #go backwards to fix address issue
-        possibleActionTemp[option[0]][option[1]] = temp
-
     print(possibleActionsList)
+
+       
+  
 possibleActions([[9,2,3], [8,0,5],[7,1,6]])
 
 #initializeBoard()
