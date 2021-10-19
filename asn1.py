@@ -26,14 +26,11 @@ def printboard(board):
 
 
 def solvePuzzle(boardState, goalState):
-    test = 10 #########################################
     alreadyTraveledStates = []
     GValue = 0
     AStarQueue = [boardState, GValue]
     goalFound = False
-    #while(len(AStarQueue) != 0):
-    while(test > 1):
-        test -= 1 
+    while(len(AStarQueue) != 0):
         GValue += 1
         nextAction = AStarQueue.pop(0)
         AStarQueue.pop(0)
@@ -41,8 +38,10 @@ def solvePuzzle(boardState, goalState):
         alreadyTraveledStates.append(nextAction)
         #print(alreadyTraveledStates)
         if(nextAction == goalState):
-            print("DONE")
             printboard(nextAction)
+            print("============================")
+            print("Total number of moves: " + str(GValue - 1))
+            print("============================")
             goalFound = True
             break
         else:
@@ -66,14 +65,10 @@ def sortQueueUsingManhattan(queue, Gvalue):
     sixGoal = (2,0)
     sevenGoal = (2,1)
     eightGoal = (2,2)
-    print(queue)
-    print("^^^^ START")
-
     for state in queue:
         HValue = 0
         FValue = 0
         if(type(state) == list):
-            print(state)
             for row in range(3):
                for col in range(3):
                    if state[row][col] == 1:
@@ -102,7 +97,6 @@ def sortQueueUsingManhattan(queue, Gvalue):
                        HValue += abs(eightGoal[1] - col)
 
             FValue = Gvalue + HValue
-            print(FValue)
             if(len(sortedQueue)) == 0: #if the sortedQueue is empty, jsut insert it
                 sortedQueue.append(state) 
                 sortedQueue.append(FValue)
@@ -111,15 +105,13 @@ def sortQueueUsingManhattan(queue, Gvalue):
                 for i in range(len(sortedQueue)): #iterate through sortedqueue
                     if(type(sortedQueue[i]) == int): #if we find previous HValue
                         if(sortedQueue[i] >= FValue): #if sortedQueue F value is greater than our current vlaue
-                           # print(HValue)
                             sortedQueue.insert((i - 1), FValue) #insert current value in front of that value
                             sortedQueue.insert((i- 1), state)
                             valueInserted = True
+                            break
                 if(valueInserted == False):
                     sortedQueue.append(state)
                     sortedQueue.append(FValue)
-                    print("APPENDED END")
-    print(sortedQueue)
     return(sortedQueue)
 
 
@@ -163,8 +155,8 @@ def possibleActions(currentState, Gvalue, alreadyTraveledStates):
     #print(possibleActionsList)
     return(possibleActionsList)
 
-print(sortQueueUsingManhattan([[[3, 1, 2], [6, 0, 5], [7, 4, 8]], 1, [[3, 1, 2], [6, 4, 5], [7, 8, 0]], 1, [[3, 1, 2], [6, 4, 5], [0, 7, 8]], 1], 1))
+#print(sortQueueUsingManhattan([[[3, 1, 2], [6, 4, 5], [0, 7, 8]], 1, [[3, 1, 2], [6, 4, 5], [7, 8, 0]], 1, [[3, 1, 2], [6, 0, 5], [7, 4, 8]], 1], 1))
 #print(possibleActions([[3,1,2],[0,4,5],[6,7,8]], 1, [[[3,1,2],[6,4,5],[0,7,8]]]))
-#initializeBoard()
+initializeBoard()
 
 #[[[3, 1, 2], [4, 0, 5], [6, 7, 8]], 2, [[0, 1, 2], [3, 4, 5], [6, 7, 8]], 3] is output in algo
