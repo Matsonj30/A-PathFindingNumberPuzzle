@@ -26,21 +26,36 @@ def printboard(board):
 
 
 def solvePuzzle(boardState, goalState):
-    printboard(boardState) 
-    alreadyTraveledStates = [boardState]
+    test = 10 #########################################
+    alreadyTraveledStates = []
     GValue = 0
     AStarQueue = [boardState, GValue]
+    goalFound = False
     while(len(AStarQueue) != 0):
+    #while(test > 1):
+        test -= 1 
         GValue += 1
         nextAction = AStarQueue.pop(0)
         AStarQueue.pop(0)
-    for action in possibleActions(nextAction, GValue):
-            AStarQueue.append(action)
-            AStarQueue = sortQueueUsingManhattan(AStarQueue)
-
-def sortQueueUsingManhattan(queue):
+        AStarQueue = []
+        alreadyTraveledStates.append(nextAction)
+        #print(alreadyTraveledStates)
+        if(nextAction == goalState):
+            print("DONE")
+            goalFound = True
+            break
+        else:
+            printboard(nextAction)
+            print(" ")
+            for action in possibleActions(nextAction, GValue , alreadyTraveledStates):
+                    AStarQueue.append(action)
+            AStarQueue = sortQueueUsingManhattan(AStarQueue, GValue)
+    if(goalFound == False):
+        print("No solution")
+def sortQueueUsingManhattan(queue, Gvalue):
     #f(n) = g(n) + h(n)
     HValue = 0
+    FValue = 0
     sortedQueue = []
     oneGoal = (0,0)
     twoGoal = (0,1)
@@ -50,51 +65,58 @@ def sortQueueUsingManhattan(queue):
     sixGoal = (1,2)
     sevenGoal = (2,0)
     eightGoal = (2,1)
- 
+    
 
     for state in queue:
         HValue = 0
+        FValue = 0
         if(type(state) == list):
             for row in range(3):
                for col in range(3):
                    if state[row][col] == 1:
                        HValue += abs(oneGoal[0] - row)
                        HValue += abs(oneGoal[1] - col)
-                       print(HValue)
                    elif state[row][col] == 2:
                        HValue += abs(twoGoal[0] - row)
                        HValue += abs(twoGoal[1] - col)
-                       print(HValue)
                    elif state[row][col] == 3:
                        HValue += abs(threeGoal[0] - row)
                        HValue += abs(threeGoal[1] - col)
-                       print(HValue)
                    elif state[row][col] == 4:
                        HValue += abs(fourGoal[0] - row)
                        HValue += abs(fourGoal[1] - col)
-                       print(HValue)
                    elif state[row][col] == 5:
                        HValue += abs(fiveGoal[0] - row)
                        HValue += abs(fiveGoal[1] - col)
-                       print(HValue)
                    elif state[row][col] == 6:
                        HValue += abs(sixGoal[0] - row)
                        HValue += abs(sixGoal[1] - col)
-                       print(HValue)
                    elif state[row][col] == 7:
                        HValue += abs(sevenGoal[0] - row)
                        HValue += abs(sevenGoal[1] - col)
-                       print(HValue)
                    elif state[row][col] == 8:
                        HValue += abs(eightGoal[0] - row)
                        HValue += abs(eightGoal[1] - col)
-                       print(HValue)
-            for()
 
-                      
+            FValue = Gvalue + HValue
+            if(len(sortedQueue)) == 0: #if the sortedQueue is empty, jsut insert it
+                sortedQueue.append(state) 
+                sortedQueue.append(FValue)
+            else:
+                valueInserted = False
+                for i in range(len(sortedQueue)): #iterate through sortedqueue
+                    if(type(sortedQueue[i]) == int): #if we find previous HValue
+                        if(sortedQueue[i] >= HValue):
+                            sortedQueue.insert((i - 1), HValue)
+                            sortedQueue.insert((i- 1), state)
+                            valueInserted = True
+                if(valueInserted == False):
+                    sortedQueue.append(state)
+                    sortedQueue.append(HValue)
+    return(sortedQueue)
 
 
-def possibleActions(currentState, Gvalue):
+def possibleActions(currentState, Gvalue, alreadyTraveledStates):
     possibleActionsList = []
     NewZeroLocations = []
     ZeroRow = -1 
@@ -126,12 +148,14 @@ def possibleActions(currentState, Gvalue):
         temp = currentState[option[0]][option[1]] #get value that is to be swapped with 0
         possibleActionTemp[option[0]][option[1]] = 0 #put zero into that spot
         possibleActionTemp[ZeroRow][ZeroCol] = temp #put the temporary value into the zero position
-        possibleActionsList.append(possibleActionTemp)
-        possibleActionsList.append(Gvalue)
-    print(len(possibleActionsList))
+        if(possibleActionTemp not in alreadyTraveledStates):
+                #print(possibleActionTemp)
+                #print(alreadyTraveledStates)
+                possibleActionsList.append(possibleActionTemp)
+                possibleActionsList.append(Gvalue)
     return(possibleActionsList)
 
-sortQueueUsingManhattan([[[9,1,3], [8,0,5],[7,6,6]], 1, [[1,2,3],[4,5,6],[7,8,0]] , 1])
-#print(possibleActions([[9,2,3], [8,0,5],[7,1,6]], 1))
-#initializeBoard()
+#sortQueueUsingManhattan([[[8,1,3], [7,0,5],[2,4,6]], 1, [[1,2,3],[4,5,6],[7,8,0]] ,1, [[1, 2, 3],[4, 5, 6],[8,7,0]]] , 1, )
+#print(possibleActions([[3,2,1],[6,5,4],[0,7,8]], 1, [[3, 2, 1],[0, 5, 4],[6,7,8]]))
+initializeBoard()
 
