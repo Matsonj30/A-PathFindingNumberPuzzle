@@ -48,7 +48,7 @@ def initializeBoard():
         if len(row) == 3: #create new row if 3 numbers already in the current row
             board.append(row)
             row = []
-   start = Node(board,0,None, "N/A") #initialize root of tree
+   start = Node(board,0,None, "") #initialize root of tree
    solvePuzzle(start, goalState)
 
 # def printBoard(board)
@@ -119,9 +119,8 @@ def printGoalPath(goalNode):
     print("(Initial)")
     for i in range(len(pathList)): #Print now in order list
         print("Move "+ str(i),end="")
-        print(" (Move blank tile ",end="")
-        print(pathList[i].direction,end="")
-        print(")")
+        print(" ",end="")
+        print(pathList[i].direction)
         printboard(pathList[i].value)
         print(" ")
     print("============================")
@@ -231,16 +230,16 @@ def possibleActions(currentState, alreadyTraveledStates, Gvalue):
     #boundary check, if in bounds, add to a list
     if(moveZeroUp[0] > -1):
         NewZeroLocations.append(moveZeroUp)
-        directionTravelled.append("up")
+        directionTravelled.append("(Move blank tile up)")
     if(moveZeroDown[0] < 3):
         NewZeroLocations.append(moveZeroDown)
-        directionTravelled.append("down")
+        directionTravelled.append("(Move blank tile down)")
     if(moveZeroRight[1] < 3):
         NewZeroLocations.append(moveZeroRight)
-        directionTravelled.append("right")
+        directionTravelled.append("(Move blank tile right)")
     if(moveZeroLeft[1] > -1):
         NewZeroLocations.append(moveZeroLeft)
-        directionTravelled.append("left")
+        directionTravelled.append("(Move blank tile left)")
     #these are the places the empty stone can move
     #for each of these options, we will find what the new board state is
     for option in NewZeroLocations:
