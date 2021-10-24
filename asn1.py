@@ -190,34 +190,37 @@ def sortQueueUsingManhattan(queue, movesToSortIntoQueue):
                 queue.append(state)
     return(queue)
 
-# def sortQueueUsingMangattan(queue, movesToSortIntoQueue)
-# given the current AStarQueue and the potential states that can be taken,
-# will use A* to move the potential states into the prexisting AStarQueue
+# def possibleActions(currentState, alreadyTraveledStates, Gvalue)
+# given the current Node and a list of already already travelled states, will determine
+# other potential moves that can be made
 
 # Parameters:
-# queue - the curent A* queue
-# movesToSortIntoQueue - potential states that can be taken from the current node
+# currentState - the Node we want to branch out from
+# alreadyTraveledStates - a list of nodes already explored
+# G value that will be assigned to any created nodes 
 
 # Returns:
-# updated A* queue 
+# list of new Nodes that will later be sorted by sortQueueUsingManhattan()
+
 def possibleActions(currentState, alreadyTraveledStates, Gvalue):
-    currentStateValue = currentState.value
+    currentStateValue = currentState.value #grab the 2d array value from the node
     possibleActionsList = []
     NewZeroLocations = []
     ZeroRow = -1 
     ZeroCol = -1
-    for row in range(3):  #find where the empty spot is
+    for row in range(3):  #find where the empty tile is
         for col in range(3):
             if currentStateValue[row][col] == 0:
                 ZeroRow = row
                 ZeroCol = col
 
     
-    moveZeroUp = [ZeroRow -1, ZeroCol] #get the coords for where the 0 could possibly be
-    moveZeroDown = [ZeroRow + 1, ZeroCol]
-    moveZeroRight = [ZeroRow, ZeroCol + 1]
-    moveZeroLeft = [ZeroRow, ZeroCol - 1]
-    #boundary check
+    moveZeroUp = [ZeroRow -1, ZeroCol] #coords of the empty stone if it moved up
+    moveZeroDown = [ZeroRow + 1, ZeroCol] #coords of the empty stone if it moved down
+    moveZeroRight = [ZeroRow, ZeroCol + 1] #coords of the empty stone if it moved right
+    moveZeroLeft = [ZeroRow, ZeroCol - 1] #coords of the empty stone if it moved left
+
+    #boundary check, if in bounds, add to a list
     if(moveZeroUp[0] > -1):
         NewZeroLocations.append(moveZeroUp)
     if(moveZeroDown[0] < 3):
@@ -227,20 +230,20 @@ def possibleActions(currentState, alreadyTraveledStates, Gvalue):
     if(moveZeroLeft[1] > -1):
         NewZeroLocations.append(moveZeroLeft)
     #these are the places the empty stone can move
-    #take the input list, "alter" it, put in new list
+    #for each of these options, we will find what the new board state is
     for option in NewZeroLocations:
         possibleActionTemp = copy.deepcopy(currentStateValue)  #giving same address 
         temp = currentStateValue[option[0]][option[1]] #get value that is to be swapped with 0
         possibleActionTemp[option[0]][option[1]] = 0 #put zero into that spot
         possibleActionTemp[ZeroRow][ZeroCol] = temp #put the temporary value into the zero position
         duplicateFound = False
-        for i in range(len(alreadyTraveledStates)):
+        for i in range(len(alreadyTraveledStates)): #make sure this state has not already been explored
             if(alreadyTraveledStates[i].value == possibleActionTemp):
                 duplicateFound = True
         if(duplicateFound == True):
             continue
         else:
-             possibleActionsList.append(Node(possibleActionTemp, Gvalue, currentState))
-    return(possibleActionsList)
+             possibleActionsList.append(Node(possibleActionTemp, Gvalue, currentState)) #duplicate found, make a new Node 
+    return(possibleActionsList) #return list of Nodes with new states
 
 initializeBoard()
