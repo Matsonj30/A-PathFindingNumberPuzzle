@@ -12,7 +12,7 @@ from typing import Match
 #[7 6 5]
 #for the 1-8 puzzle game. The program will then use A* pathfinding to find the least amount of steps to reach
 #the goal state by sliding the blocks up/down/left/right
-#[0 1 2]
+#[  1 2]
 #[3 4 5]
 #[6 7 8]
 
