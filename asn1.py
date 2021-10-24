@@ -4,6 +4,8 @@ from typing import Match
 # Jared Matson
 # #1570490
 # Asn1.py
+# ***CURRENTLY RUNS infinitely, instruction on Eclass makes it look like the program will constantly ask for states to solve***
+
 # Given 9 numbers from 0-8 (e.g 1 8 2 0 4 3 7 6 5) will return said numbers as an initial state
 #[1 8 2]
 #[2   4]
@@ -22,13 +24,15 @@ from typing import Match
 #[7 6 5]
 #gvalue = the gValue of the Node, e.g the amount of moves it took to get to that state
 #parent = the parent Node or previous state of the node
+#direction = Direction the empty spot had to move to reach Node
 class Node:
-    def __init__(self, value, gvalue, parent) -> None:
+    def __init__(self, value, gvalue, parent, direction) -> None:
         self.value = value
         self.parent = parent
         self.h = 0
         self.f = 0
         self.g = gvalue
+        self.direction = direction
 
 # def InitializeBoard()
 # Takes an input from the user e.g (e.g 1 8 2 0 4 3 7 6 5) and will create a 2d
@@ -44,7 +48,7 @@ def initializeBoard():
         if len(row) == 3: #create new row if 3 numbers already in the current row
             board.append(row)
             row = []
-   start = Node(board,0,None) #initialize root of tree
+   start = Node(board,0,None, "N/A") #initialize root of tree
    solvePuzzle(start, goalState)
 
 # def printBoard(board)
@@ -109,13 +113,16 @@ def solvePuzzle(boardState, goalState):
 def printGoalPath(goalNode):
     pathList = []
     while(goalNode.parent != None):       #We are at the bottom of the tree, and we want to print from the top down, not the bottom up
-        pathList.insert(0,goalNode.value) #We can easier print the states from the root to the goal node if we just add it to a list to flip the order
+        pathList.insert(0,goalNode) #We can easier print the states from the root to the goal node if we just add it to a list to flip the order
         goalNode = goalNode.parent
-    pathList.insert(0,goalNode.value) #add root node
+    pathList.insert(0,goalNode) #add root node
     print("(Initial)")
     for i in range(len(pathList)): #Print now in order list
-        print("Move "+ str(i))
-        printboard(pathList[i])
+        print("Move "+ str(i),end="")
+        print(" (Move blank tile ",end="")
+        print(pathList[i].direction,end="")
+        print(")")
+        printboard(pathList[i].value)
         print(" ")
     print("============================")
     print("Total number of moves: " + str(len(pathList) - 1))
@@ -206,6 +213,7 @@ def possibleActions(currentState, alreadyTraveledStates, Gvalue):
     currentStateValue = currentState.value #grab the 2d array value from the node
     possibleActionsList = []
     NewZeroLocations = []
+    directionTravelled = []
     ZeroRow = -1 
     ZeroCol = -1
     for row in range(3):  #find where the empty tile is
@@ -223,12 +231,16 @@ def possibleActions(currentState, alreadyTraveledStates, Gvalue):
     #boundary check, if in bounds, add to a list
     if(moveZeroUp[0] > -1):
         NewZeroLocations.append(moveZeroUp)
+        directionTravelled.append("up")
     if(moveZeroDown[0] < 3):
         NewZeroLocations.append(moveZeroDown)
+        directionTravelled.append("down")
     if(moveZeroRight[1] < 3):
         NewZeroLocations.append(moveZeroRight)
+        directionTravelled.append("right")
     if(moveZeroLeft[1] > -1):
         NewZeroLocations.append(moveZeroLeft)
+        directionTravelled.append("left")
     #these are the places the empty stone can move
     #for each of these options, we will find what the new board state is
     for option in NewZeroLocations:
@@ -241,9 +253,14 @@ def possibleActions(currentState, alreadyTraveledStates, Gvalue):
             if(alreadyTraveledStates[i].value == possibleActionTemp):
                 duplicateFound = True
         if(duplicateFound == True):
+            if(len(directionTravelled) > 0):
+                    directionTravelled.pop(0) #we want to make sure the node we create has the right direction, if a duplicate is found, we have to pop its direction too
             continue
         else:
-             possibleActionsList.append(Node(possibleActionTemp, Gvalue, currentState)) #duplicate found, make a new Node 
+             possibleActionsList.append(Node(possibleActionTemp, Gvalue, currentState, directionTravelled.pop(0))) #duplicate found, make a new Node 
+    
     return(possibleActionsList) #return list of Nodes with new states
 
-initializeBoard()
+#program runs infinitely as of right now... manually terminate to stop
+while True:
+    initializeBoard()
